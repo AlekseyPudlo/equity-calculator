@@ -13,18 +13,18 @@
  *
  * Note: The function throws an error if `P_n` is equal to `P_a` to prevent division by zero, which logically represents a scenario with no meaningful action needed since the new price equals the desired average price.
  * 
- * @param pb The price at which the initial stock quantity was bought.
- * @param qb The initial quantity of stocks bought.
- * @param pn The price at which the new stocks are to be bought or sold.
- * @param pa The desired average price of the total stock position after adjustment.
+ * @param priceInitial The price at which the initial stock quantity was bought.
+ * @param stockNumberInitial The initial quantity of stocks bought.
+ * @param priceNew The price at which the new stocks are to be bought or sold.
+ * @param priceAverage The desired average price of the total stock position after adjustment.
  * @returns The quantity of stocks to buy (positive number) or sell (negative number) to achieve the desired average price.
  * @throws {Error} If the new price (`P_n`) and the desired average price (`P_a`) are the same, indicating an invalid operation.
  */
-export function calculateStocksToAdjust(pb: number, qb: number, pn: number, pa: number): number {
+export function calculateStocksToAdjust(priceInitial: number, stockNumberInitial: number, priceNew: number, priceAverage: number): number {
   // Validate inputs to avoid division by zero or other invalid operations
-  if (pn === pa) throw new Error("New price and desired average price cannot be the same.");
+  if (priceNew === priceAverage) throw new Error("New price and desired average price cannot be the same.");
 
-  const qn = ((pa * qb) - (pb * qb)) / (pn - pa);
+  const stockNumberNew = ((priceAverage * stockNumberInitial) - (priceInitial * stockNumberInitial)) / (priceNew - priceAverage);
   
-  return qn;
+  return stockNumberNew;
 }
