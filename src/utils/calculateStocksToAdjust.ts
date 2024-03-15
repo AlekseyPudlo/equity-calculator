@@ -26,21 +26,28 @@ export function calculateStocksToAdjust(
   priceInitial: number,
   stockNumberInitial: number,
   priceNew: number,
-  priceAverage: number
+  priceAverage: number,
   ): number {
-    // Validate inputs to avoid division by zero or other invalid operations
-    if (priceNew === priceAverage) throw new Error("New price and desired average price cannot be the same.");
-
-    let stockNumberNew: number;
-
-    if (positionType === 'long') {
-      stockNumberNew = ((priceAverage - priceInitial) * stockNumberInitial) / (priceNew - priceAverage);
-    } else if (positionType === 'short') {
-      stockNumberNew = ((priceInitial - priceAverage) * stockNumberInitial) / (priceAverage - priceNew);
-    } else {
+    if (priceNew === priceAverage) {
+      throw new Error("New price and desired average price cannot be the same.");
+    }
+    if (positionType !== 'long' && positionType !== 'short') {
       throw new Error("Invalid position type. Must be 'long' or 'short'.");
     }
+    // Check conditions where no calculation is needed based on position type and price comparison
+    if ((positionType === 'long' && priceNew < priceInitial) || (positionType === 'short' && priceNew > priceInitial)) {
+      throw new Error("New price not favorable for adjustment based on position type.");
+    }
+
+
+    const stockNumberNew: number = (() => {
+      const numerator = (priceAverage - priceInitial) * stockNumberInitial;
+      const denominator = priceNew - priceAverage;
+    
+      // Ensure we do not divide by zero; this check is implicitly covered by previous conditions
+      return numerator / denominator;
+    })();
   
     // Round to nearest whole number to ensure stock quantity is an integer
-    return Math.floor(stockNumberNew);  
+    return Math.floor(stockNumberNew);
 }
